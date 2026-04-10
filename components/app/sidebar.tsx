@@ -116,7 +116,8 @@ export function Sidebar() {
               <div className="mt-1 space-y-0.5">
                 {projects.map((p) => {
                   const href = `/projects/${p.slug}`;
-                  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+                  const isActive =
+                    pathname === href || pathname.startsWith(`${href}/`);
                   return (
                     <div key={p._id}>
                       <Link

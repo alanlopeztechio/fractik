@@ -27,8 +27,8 @@ export default function DashboardPage() {
               <FolderOpen className="h-12 w-12 text-muted-foreground mb-4" />
               <h2 className="text-lg font-medium">No hay proyectos aún</h2>
               <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-                Crea tu primer proyecto para empezar a definir la estructura
-                de tu producto.
+                Crea tu primer proyecto para empezar a definir la estructura de
+                tu producto.
               </p>
             </CardContent>
           </Card>
