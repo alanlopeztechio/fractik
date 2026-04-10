@@ -1,11 +1,21 @@
 import { v } from "convex/values";
-import { query, mutation, internalQuery, internalMutation } from "./_generated/server";
+import {
+  query,
+  mutation,
+  internalQuery,
+  internalMutation,
+} from "./_generated/server";
 import { getAuthUser } from "./lib/auth";
 
 export const create = mutation({
   args: {
     featureId: v.id("features"),
-    type: v.union(v.literal("NF"), v.literal("BE"), v.literal("FE"), v.literal("DA")),
+    type: v.union(
+      v.literal("NF"),
+      v.literal("BE"),
+      v.literal("FE"),
+      v.literal("DA")
+    ),
     title: v.string(),
     content: v.optional(v.string()),
     isDesignSystem: v.optional(v.boolean()),
@@ -134,7 +144,7 @@ export const updateStatus = mutation({
       v.literal("reviewed"),
       v.literal("approved"),
       v.literal("implemented"),
-      v.literal("deprecated"),
+      v.literal("deprecated")
     ),
   },
   handler: async (ctx, args) => {
@@ -149,13 +159,44 @@ export const updateStatus = mutation({
       const allowed = VALID_STATUS_TRANSITIONS[spec.status];
       if (!allowed || !allowed.includes(args.status)) {
         throw new Error(
-          `Invalid status transition: ${spec.status} -> ${args.status}`,
+          `Invalid status transition: ${spec.status} -> ${args.status}`
         );
       }
     }
 
     await ctx.db.patch(args.specId, {
       status: args.status,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+export const updateMeta = mutation({
+  args: {
+    specId: v.id("specs"),
+    title: v.optional(v.string()),
+    technicalNotes: v.optional(v.string()),
+    constraints: v.optional(v.string()),
+    dependencies: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const { orgId } = await getAuthUser(ctx);
+    const spec = await ctx.db.get(args.specId);
+    if (!spec || spec.orgId !== orgId) {
+      throw new Error("Not found");
+    }
+    const { specId, ...updates } = args;
+    await ctx.db.patch(specId, {
+      ...(updates.title !== undefined && { title: updates.title }),
+      ...(updates.technicalNotes !== undefined && {
+        technicalNotes: updates.technicalNotes,
+      }),
+      ...(updates.constraints !== undefined && {
+        constraints: updates.constraints,
+      }),
+      ...(updates.dependencies !== undefined && {
+        dependencies: updates.dependencies,
+      }),
       updatedAt: Date.now(),
     });
   },
@@ -240,7 +281,12 @@ export const listByProject = query({
   args: {
     projectId: v.id("projects"),
     type: v.optional(
-      v.union(v.literal("NF"), v.literal("BE"), v.literal("FE"), v.literal("DA")),
+      v.union(
+        v.literal("NF"),
+        v.literal("BE"),
+        v.literal("FE"),
+        v.literal("DA")
+      )
     ),
     status: v.optional(
       v.union(
@@ -248,8 +294,8 @@ export const listByProject = query({
         v.literal("reviewed"),
         v.literal("approved"),
         v.literal("implemented"),
-        v.literal("deprecated"),
-      ),
+        v.literal("deprecated")
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -313,7 +359,12 @@ export const createInternal = internalMutation({
     orgId: v.string(),
     userId: v.string(),
     featureId: v.id("features"),
-    type: v.union(v.literal("NF"), v.literal("BE"), v.literal("FE"), v.literal("DA")),
+    type: v.union(
+      v.literal("NF"),
+      v.literal("BE"),
+      v.literal("FE"),
+      v.literal("DA")
+    ),
     title: v.string(),
     content: v.optional(v.string()),
   },
@@ -393,7 +444,7 @@ export const updateStatusInternal = internalMutation({
       v.literal("reviewed"),
       v.literal("approved"),
       v.literal("implemented"),
-      v.literal("deprecated"),
+      v.literal("deprecated")
     ),
   },
   handler: async (ctx, args) => {
@@ -406,7 +457,7 @@ export const updateStatusInternal = internalMutation({
       const allowed = VALID_STATUS_TRANSITIONS[spec.status];
       if (!allowed || !allowed.includes(args.status)) {
         throw new Error(
-          `Invalid status transition: ${spec.status} -> ${args.status}`,
+          `Invalid status transition: ${spec.status} -> ${args.status}`
         );
       }
     }

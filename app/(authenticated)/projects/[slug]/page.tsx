@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,11 +10,26 @@ import { ProjectOverview } from "@/components/app/projects/project-overview";
 import { CapabilitiesTab } from "@/components/app/projects/capabilities-tab";
 import { ProjectSettings } from "@/components/app/projects/project-settings";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export default function ProjectPage() {
   const { slug } = useParams<{ slug: string }>();
   const project = useQuery(api.projects.getBySlug, { slug });
   const updateProject = useMutation(api.projects.update);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const activeTab = searchParams.get("tab") ?? "overview";
+
+  function handleTabChange(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "overview") {
+      params.delete("tab");
+    } else {
+      params.set("tab", value);
+    }
+    const query = params.toString();
+    router.replace(`/projects/${slug}${query ? `?${query}` : ""}`);
+  }
 
   if (project === undefined) {
     return (
@@ -44,7 +59,7 @@ export default function ProjectPage() {
       toast.success("Nombre actualizado");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Error al actualizar",
+        error instanceof Error ? error.message : "Error al actualizar"
       );
     }
   }
@@ -69,7 +84,7 @@ export default function ProjectPage() {
       )}
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="mt-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="capabilities">Capabilities</TabsTrigger>
