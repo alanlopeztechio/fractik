@@ -4,14 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SpecMarkdownEditor } from "./spec-markdown-editor";
-import type { SpecType } from "./spec-type-badge";
-
-const SPEC_TYPES: { value: SpecType; label: string }[] = [
-  { value: "NF", label: "NF – Non-Functional" },
-  { value: "BE", label: "BE – Backend" },
-  { value: "FE", label: "FE – Frontend" },
-  { value: "DA", label: "DA – Data" },
-];
+import { type SpecType } from "./spec-type-badge";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export interface SpecFormValues {
   title: string;
@@ -65,23 +59,42 @@ export function SpecForm({ values, onChange }: SpecFormProps) {
         <Label htmlFor="spec-type">
           Tipo <span className="text-destructive">*</span>
         </Label>
-        <div className="flex flex-wrap gap-2">
-          {SPEC_TYPES.map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => set("type", value)}
-              className={[
-                "rounded border px-3 py-1 text-sm transition-colors",
-                values.type === value
-                  ? "border-foreground bg-foreground text-background font-semibold"
-                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground",
-              ].join(" ")}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <ToggleGroup
+          value={[values.type]}
+          onValueChange={(v: string[]) => {
+            const last = v.find((x) => x !== values.type) ?? v[0];
+            if (last) set("type", last as SpecType);
+          }}
+          size="sm"
+          spacing={2}
+          variant="default"
+          className="justify-start flex-wrap gap-2"
+        >
+          <ToggleGroupItem
+            value="NF"
+            className="rounded-full data-[state=on]:bg-muted"
+          >
+            <span className="font-bold mr-2 opacity-70">NF</span> Non-Functional
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="BE"
+            className="rounded-full data-[state=on]:bg-blue-900/20 data-[state=on]:text-blue-400"
+          >
+            <span className="font-bold mr-2 opacity-70">BE</span> Backend
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="FE"
+            className="rounded-full data-[state=on]:bg-green-900/20 data-[state=on]:text-green-400"
+          >
+            <span className="font-bold mr-2 opacity-70">FE</span> Frontend
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="DA"
+            className="rounded-full data-[state=on]:bg-orange-900/20 data-[state=on]:text-orange-400"
+          >
+            <span className="font-bold mr-2 opacity-70">DA</span> Data
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       {/* Content */}

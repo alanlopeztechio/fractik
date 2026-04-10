@@ -108,7 +108,7 @@ export function SpecsSection({ featureId }: SpecsSectionProps) {
               <DialogTitle>Nueva Spec</DialogTitle>
             </DialogHeader>
             <SpecForm values={values} onChange={setValues} />
-            <DialogFooter showCloseButton>
+            <DialogFooter showCloseButton className="items-center">
               <Button onClick={handleCreate} disabled={loading} size="sm">
                 Crear spec
               </Button>

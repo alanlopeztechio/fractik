@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export type SpecType = "NF" | "BE" | "FE" | "DA";
@@ -28,18 +29,14 @@ export function SpecTypeBadge({
   className,
 }: SpecTypeBadgeProps) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold font-mono",
-        TYPE_STYLES[type],
-        className
-      )}
+    <Badge
+      className={cn(TYPE_STYLES[type], className)}
       title={TYPE_LABELS[type]}
     >
       {type}
       {showLabel && (
         <span className="ml-1 font-normal font-sans">{TYPE_LABELS[type]}</span>
       )}
-    </span>
+    </Badge>
   );
 }
