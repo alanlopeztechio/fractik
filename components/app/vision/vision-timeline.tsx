@@ -35,7 +35,7 @@ export function VisionTimeline({
           Versión actual: v{currentVersionNumber}
         </p>
       </div>
-      <ScrollArea className="h-[500px]">
+      <ScrollArea className="h-125">
         {versions === undefined && (
           <div className="space-y-3 p-4">
             {[1, 2, 3].map((i) => (

@@ -1,5 +1,10 @@
 import { v } from "convex/values";
-import { query, mutation, internalMutation, internalQuery } from "./_generated/server";
+import {
+  query,
+  mutation,
+  internalMutation,
+  internalQuery,
+} from "./_generated/server";
 import { getAuthUser } from "./lib/auth";
 import { cascadeDeleteFeature } from "./projects";
 
@@ -14,8 +19,8 @@ export const create = mutation({
           id: v.string(),
           text: v.string(),
           sortOrder: v.number(),
-        }),
-      ),
+        })
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -27,7 +32,9 @@ export const create = mutation({
 
     const existing = await ctx.db
       .query("features")
-      .withIndex("by_capability", (q) => q.eq("capabilityId", args.capabilityId))
+      .withIndex("by_capability", (q) =>
+        q.eq("capabilityId", args.capabilityId)
+      )
       .collect();
 
     const now = Date.now();
@@ -57,8 +64,8 @@ export const update = mutation({
         v.literal("defined"),
         v.literal("spec_ready"),
         v.literal("in_progress"),
-        v.literal("done"),
-      ),
+        v.literal("done")
+      )
     ),
     acceptanceCriteria: v.optional(
       v.array(
@@ -66,8 +73,8 @@ export const update = mutation({
           id: v.string(),
           text: v.string(),
           sortOrder: v.number(),
-        }),
-      ),
+        })
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -88,7 +95,7 @@ export const update = mutation({
       const allowed = validTransitions[feature.status];
       if (!allowed || !allowed.includes(args.status)) {
         throw new Error(
-          `Invalid status transition: ${feature.status} -> ${args.status}`,
+          `Invalid status transition: ${feature.status} -> ${args.status}`
         );
       }
     }
@@ -96,7 +103,9 @@ export const update = mutation({
     const { featureId, ...updates } = args;
     await ctx.db.patch(featureId, {
       ...(updates.name !== undefined && { name: updates.name }),
-      ...(updates.description !== undefined && { description: updates.description }),
+      ...(updates.description !== undefined && {
+        description: updates.description,
+      }),
       ...(updates.status !== undefined && { status: updates.status }),
       ...(updates.acceptanceCriteria !== undefined && {
         acceptanceCriteria: updates.acceptanceCriteria,
@@ -125,7 +134,7 @@ export const move = mutation({
     const existingInTarget = await ctx.db
       .query("features")
       .withIndex("by_capability", (q) =>
-        q.eq("capabilityId", args.targetCapabilityId),
+        q.eq("capabilityId", args.targetCapabilityId)
       )
       .collect();
 
@@ -165,8 +174,8 @@ export const createInternal = internalMutation({
           id: v.string(),
           text: v.string(),
           sortOrder: v.number(),
-        }),
-      ),
+        })
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -177,7 +186,9 @@ export const createInternal = internalMutation({
 
     const existing = await ctx.db
       .query("features")
-      .withIndex("by_capability", (q) => q.eq("capabilityId", args.capabilityId))
+      .withIndex("by_capability", (q) =>
+        q.eq("capabilityId", args.capabilityId)
+      )
       .collect();
 
     const now = Date.now();
@@ -208,8 +219,8 @@ export const updateInternal = internalMutation({
         v.literal("defined"),
         v.literal("spec_ready"),
         v.literal("in_progress"),
-        v.literal("done"),
-      ),
+        v.literal("done")
+      )
     ),
     acceptanceCriteria: v.optional(
       v.array(
@@ -217,8 +228,8 @@ export const updateInternal = internalMutation({
           id: v.string(),
           text: v.string(),
           sortOrder: v.number(),
-        }),
-      ),
+        })
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -271,7 +282,7 @@ export const getDetailedInternal = internalQuery({
           status: spec.status,
           testCount: tests.length,
         };
-      }),
+      })
     );
 
     return {
@@ -305,7 +316,9 @@ export const listByCapability = query({
 
     const features = await ctx.db
       .query("features")
-      .withIndex("by_capability", (q) => q.eq("capabilityId", args.capabilityId))
+      .withIndex("by_capability", (q) =>
+        q.eq("capabilityId", args.capabilityId)
+      )
       .collect();
 
     return features.sort((a, b) => a.sortOrder - b.sortOrder);

@@ -22,11 +22,7 @@ export function ProjectOverview({
   visionContent,
 }: ProjectOverviewProps) {
   const capabilities = useQuery(api.capabilities.listByProject, { projectId });
-
-  const stats =
-    capabilities !== undefined
-      ? { capabilityCount: capabilities.length }
-      : null;
+  const stats = useQuery(api.projects.getProjectStats, { projectId });
 
   return (
     <div className="space-y-6">
@@ -67,24 +63,25 @@ export function ProjectOverview({
           icon={Layers}
           label="Capabilities"
           value={stats?.capabilityCount}
+          loading={stats === undefined}
         />
         <StatCard
           icon={GitBranch}
           label="Features"
-          value={undefined}
-          loading={capabilities === undefined}
+          value={stats?.featureCount}
+          loading={stats === undefined}
         />
         <StatCard
           icon={FileText}
           label="Specs"
-          value={undefined}
-          loading={capabilities === undefined}
+          value={stats?.specCount}
+          loading={stats === undefined}
         />
         <StatCard
           icon={TestTube2}
           label="Tests"
-          value={undefined}
-          loading={capabilities === undefined}
+          value={stats?.testCount}
+          loading={stats === undefined}
         />
       </div>
 

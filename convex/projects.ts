@@ -1,5 +1,11 @@
 import { v } from "convex/values";
-import { query, mutation, internalQuery, internalMutation, MutationCtx } from "./_generated/server";
+import {
+  query,
+  mutation,
+  internalQuery,
+  internalMutation,
+  MutationCtx,
+} from "./_generated/server";
 import { getAuthUser } from "./lib/auth";
 import { Id } from "./_generated/dataModel";
 
@@ -34,7 +40,9 @@ export const create = mutation({
     while (true) {
       const existing = await ctx.db
         .query("projects")
-        .withIndex("by_org_and_slug", (q) => q.eq("orgId", orgId).eq("slug", slug))
+        .withIndex("by_org_and_slug", (q) =>
+          q.eq("orgId", orgId).eq("slug", slug)
+        )
         .unique();
       if (!existing) break;
       slug = `${baseSlug}-${suffix}`;
@@ -72,7 +80,10 @@ export const update = mutation({
       throw new Error("Not found");
     }
 
-    if (args.name !== undefined && (args.name.length < 1 || args.name.length > 100)) {
+    if (
+      args.name !== undefined &&
+      (args.name.length < 1 || args.name.length > 100)
+    ) {
       throw new Error("Name must be between 1 and 100 characters");
     }
 
@@ -82,7 +93,9 @@ export const update = mutation({
       }
       const existing = await ctx.db
         .query("projects")
-        .withIndex("by_org_and_slug", (q) => q.eq("orgId", orgId).eq("slug", args.slug!))
+        .withIndex("by_org_and_slug", (q) =>
+          q.eq("orgId", orgId).eq("slug", args.slug!)
+        )
         .unique();
       if (existing && existing._id !== args.projectId) {
         throw new Error("Slug already in use");
@@ -93,7 +106,9 @@ export const update = mutation({
       ...(args.name !== undefined && { name: args.name }),
       ...(args.description !== undefined && { description: args.description }),
       ...(args.slug !== undefined && { slug: args.slug }),
-      ...(args.githubRepoUrl !== undefined && { githubRepoUrl: args.githubRepoUrl }),
+      ...(args.githubRepoUrl !== undefined && {
+        githubRepoUrl: args.githubRepoUrl,
+      }),
       updatedAt: Date.now(),
     });
   },
@@ -175,7 +190,9 @@ export const getBySlug = query({
     const { orgId } = await getAuthUser(ctx);
     return await ctx.db
       .query("projects")
-      .withIndex("by_org_and_slug", (q) => q.eq("orgId", orgId).eq("slug", args.slug))
+      .withIndex("by_org_and_slug", (q) =>
+        q.eq("orgId", orgId).eq("slug", args.slug)
+      )
       .unique();
   },
 });
@@ -235,7 +252,7 @@ export const listWithMetrics = query({
       const pendingDivergences = await ctx.db
         .query("divergences")
         .withIndex("by_org_and_decision", (q) =>
-          q.eq("orgId", orgId).eq("decision", "pending"),
+          q.eq("orgId", orgId).eq("decision", "pending")
         )
         .collect();
       // Filter to this project's specs
@@ -256,10 +273,11 @@ export const listWithMetrics = query({
         }
       }
       const projectDivergences = pendingDivergences.filter((d) =>
-        projectSpecIds.has(d.specId),
+        projectSpecIds.has(d.specId)
       );
 
-      const coverage = specCount > 0 ? Math.round((specsWithTests / specCount) * 100) : 0;
+      const coverage =
+        specCount > 0 ? Math.round((specsWithTests / specCount) * 100) : 0;
 
       results.push({
         ...project,
@@ -275,6 +293,59 @@ export const listWithMetrics = query({
     }
 
     return results.sort((a, b) => b.updatedAt - a.updatedAt);
+  },
+});
+
+// ─── Project stats ───────────────────────────────────────
+
+export const getProjectStats = query({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, args) => {
+    const { orgId } = await getAuthUser(ctx);
+    const project = await ctx.db.get(args.projectId);
+    if (!project || project.orgId !== orgId) {
+      throw new Error("Not found");
+    }
+
+    const capabilities = await ctx.db
+      .query("capabilities")
+      .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+      .collect();
+
+    let featureCount = 0;
+    let specCount = 0;
+    let testCount = 0;
+
+    for (const cap of capabilities) {
+      const features = await ctx.db
+        .query("features")
+        .withIndex("by_capability", (q) => q.eq("capabilityId", cap._id))
+        .collect();
+      featureCount += features.length;
+
+      for (const feat of features) {
+        const specs = await ctx.db
+          .query("specs")
+          .withIndex("by_feature", (q) => q.eq("featureId", feat._id))
+          .collect();
+        specCount += specs.length;
+
+        for (const spec of specs) {
+          const tests = await ctx.db
+            .query("testCases")
+            .withIndex("by_spec", (q) => q.eq("specId", spec._id))
+            .collect();
+          testCount += tests.length;
+        }
+      }
+    }
+
+    return {
+      capabilityCount: capabilities.length,
+      featureCount,
+      specCount,
+      testCount,
+    };
   },
 });
 
@@ -381,7 +452,7 @@ export const getBySlugInternal = internalQuery({
     return await ctx.db
       .query("projects")
       .withIndex("by_org_and_slug", (q) =>
-        q.eq("orgId", args.orgId).eq("slug", args.slug),
+        q.eq("orgId", args.orgId).eq("slug", args.slug)
       )
       .unique();
   },
@@ -393,7 +464,7 @@ export const getMetaInternal = internalQuery({
     const project = await ctx.db
       .query("projects")
       .withIndex("by_org_and_slug", (q) =>
-        q.eq("orgId", args.orgId).eq("slug", args.slug),
+        q.eq("orgId", args.orgId).eq("slug", args.slug)
       )
       .unique();
     if (!project) return null;
@@ -449,7 +520,7 @@ export const getProjectTree = internalQuery({
     const project = await ctx.db
       .query("projects")
       .withIndex("by_org_and_slug", (q) =>
-        q.eq("orgId", args.orgId).eq("slug", args.slug),
+        q.eq("orgId", args.orgId).eq("slug", args.slug)
       )
       .unique();
 
@@ -533,7 +604,9 @@ export const createInternal = internalMutation({
     while (true) {
       const existing = await ctx.db
         .query("projects")
-        .withIndex("by_org_and_slug", (q) => q.eq("orgId", args.orgId).eq("slug", slug))
+        .withIndex("by_org_and_slug", (q) =>
+          q.eq("orgId", args.orgId).eq("slug", slug)
+        )
         .unique();
       if (!existing) break;
       slug = `${baseSlug}-${suffix}`;
@@ -571,14 +644,19 @@ export const updateInternal = internalMutation({
       throw new Error("Not found");
     }
 
-    if (args.name !== undefined && (args.name.length < 1 || args.name.length > 100)) {
+    if (
+      args.name !== undefined &&
+      (args.name.length < 1 || args.name.length > 100)
+    ) {
       throw new Error("Name must be between 1 and 100 characters");
     }
 
     await ctx.db.patch(args.projectId, {
       ...(args.name !== undefined && { name: args.name }),
       ...(args.description !== undefined && { description: args.description }),
-      ...(args.githubRepoUrl !== undefined && { githubRepoUrl: args.githubRepoUrl }),
+      ...(args.githubRepoUrl !== undefined && {
+        githubRepoUrl: args.githubRepoUrl,
+      }),
       ...(args.isPublic !== undefined && { isPublic: args.isPublic }),
       updatedAt: Date.now(),
     });
@@ -623,7 +701,7 @@ export const updateVisionInternal = internalMutation({
 
 export async function cascadeDeleteFeature(
   ctx: MutationCtx,
-  featureId: Id<"features">,
+  featureId: Id<"features">
 ) {
   // Delete user stories
   const stories = await ctx.db
@@ -646,10 +724,7 @@ export async function cascadeDeleteFeature(
   await ctx.db.delete(featureId);
 }
 
-export async function cascadeDeleteSpec(
-  ctx: MutationCtx,
-  specId: Id<"specs">,
-) {
+export async function cascadeDeleteSpec(ctx: MutationCtx, specId: Id<"specs">) {
   // Delete spec versions
   const versions = await ctx.db
     .query("specVersions")
@@ -689,7 +764,7 @@ export async function cascadeDeleteSpec(
 
 export async function cascadeDeleteSprint(
   ctx: MutationCtx,
-  sprintId: Id<"sprints">,
+  sprintId: Id<"sprints">
 ) {
   const items = await ctx.db
     .query("sprintItems")

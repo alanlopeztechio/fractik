@@ -10,6 +10,7 @@ import { ProjectOverview } from "@/components/app/projects/project-overview";
 import { CapabilitiesTab } from "@/components/app/projects/capabilities-tab";
 import { ProjectSettings } from "@/components/app/projects/project-settings";
 import { toast } from "sonner";
+import Mermaid from "@/components/tests/mermaid";
 
 export default function ProjectPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -73,6 +74,7 @@ export default function ProjectPage() {
           as="h1"
           className="text-2xl font-bold tracking-tight"
         />
+
         <Badge variant={project.isPublic ? "default" : "secondary"}>
           {project.isPublic ? "Público" : "Privado"}
         </Badge>
@@ -81,6 +83,15 @@ export default function ProjectPage() {
       {project.description && (
         <p className="mt-1 text-muted-foreground">{project.description}</p>
       )}
+
+      <Mermaid
+        chart={`
+          graph TD
+            A[Inicio] --> B{¿Funciona?}
+            B -- Sí --> C[¡Genial!]
+            B -- No --> D[Revisar Consola]
+          `}
+      />
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
