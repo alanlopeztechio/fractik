@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/app/empty-state";
 import { Layers, GitBranch, FileText, TestTube2, Pencil } from "lucide-react";
+import { VisionPreview } from "@/components/app/vision/vision-preview";
 
 interface ProjectOverviewProps {
   projectId: Id<"projects">;
@@ -47,8 +48,8 @@ export function ProjectOverview({
           </Button>
         </div>
         {visionContent ? (
-          <div className="rounded-lg border bg-muted/30 p-4">
-            <p className="whitespace-pre-wrap text-sm">{visionContent}</p>
+          <div className="rounded-lg border bg-muted/30 px-5 py-10">
+            <VisionPreview content={visionContent} />
           </div>
         ) : (
           <div className="rounded-lg border border-dashed bg-muted/10 p-6 text-center">
