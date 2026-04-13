@@ -22,7 +22,7 @@ export default function AuthenticatedLayout({
         </div>
 
         {/* Content */}
-        <div className="mx-auto max-w-[1280px] px-6 py-6">{children}</div>
+        <div className="mx-auto max-w-7xl px-6 py-6">{children}</div>
       </main>
     </div>
   );

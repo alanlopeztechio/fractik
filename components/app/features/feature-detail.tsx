@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 interface FeatureDetailProps {
   feature: Doc<"features">;
+  slugProject?: string;
 }
 
 const statusFlow = [
@@ -23,7 +24,7 @@ const statusFlow = [
   "done",
 ] as const;
 
-export function FeatureDetail({ feature }: FeatureDetailProps) {
+export function FeatureDetail({ feature, slugProject }: FeatureDetailProps) {
   const updateFeature = useMutation(api.features.update);
   const capability = useQuery(api.capabilities.get, {
     capabilityId: feature.capabilityId,
@@ -72,8 +73,16 @@ export function FeatureDetail({ feature }: FeatureDetailProps) {
       {capability && (
         <Breadcrumbs
           items={[
-            { label: "Capabilities", href: "/projects" },
-            { label: capability.name, href: undefined },
+            {
+              label: "Capabilities",
+              href: slugProject ? `/projects/${slugProject}` : undefined,
+            },
+            {
+              label: capability.name,
+              href: slugProject
+                ? `/projects/${slugProject}?tab=capabilities`
+                : undefined,
+            },
             { label: feature.name },
           ]}
         />

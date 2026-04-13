@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import mermaid from "mermaid";
 import { useTheme } from "next-themes";
 
@@ -8,10 +8,12 @@ interface MermaidProps {
 }
 
 const Mermaid = ({ chart }: MermaidProps) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const idRef = useRef(`mermaid-${Math.random().toString(36).slice(2, 8)}`);
   const { resolvedTheme } = useTheme();
+
+  const reactId = useId().replace(/:/g, "");
+  const renderId = `mermaid-svg-${reactId}`;
 
   useEffect(() => {
     mermaid.initialize({
@@ -21,38 +23,46 @@ const Mermaid = ({ chart }: MermaidProps) => {
     });
 
     const renderChart = async () => {
-      if (!ref.current || !chart.trim()) return;
-
-      setError(null);
-      ref.current.innerHTML = "";
-
-      const existing = document.getElementById(idRef.current);
-      if (existing) existing.remove();
+      if (!containerRef.current || !chart.trim()) return;
 
       try {
-        const { svg } = await mermaid.render(idRef.current, chart);
-        if (ref.current) {
-          ref.current.innerHTML = svg;
+        setError(null);
+
+        const { svg, bindFunctions } = await mermaid.render(renderId, chart);
+
+        if (containerRef.current) {
+          containerRef.current.innerHTML = svg;
+
+          if (bindFunctions) {
+            bindFunctions(containerRef.current);
+          }
         }
       } catch (err) {
-        console.error("Mermaid error:", err);
+        console.error("Mermaid render error:", err);
         setError("Error en sintaxis del diagrama");
+
+        const badge = document.getElementById(`d${renderId}`);
+        if (badge) badge.remove();
       }
     };
 
     renderChart();
-  }, [chart, resolvedTheme]);
+
+    return () => {
+      const existing = document.getElementById(renderId);
+      if (existing) existing.remove();
+    };
+  }, [chart, resolvedTheme, renderId]);
 
   return (
-    <div className="w-full overflow-x-auto p-4">
-      {error ? (
-        <p className="text-red-500 text-xs">{error}</p>
-      ) : (
-        <div
-          ref={ref}
-          className="mermaid-container flex justify-center w-full min-h-25"
-        />
-      )}
+    <div className="w-full overflow-x-auto p-4 flex flex-col items-center">
+      {error && <p className="text-destructive text-xs font-mono">{error}</p>}
+      <div
+        ref={containerRef}
+        className={`mermaid-container flex justify-center w-full transition-opacity duration-300 ${
+          error ? "opacity-0 h-0" : "opacity-100 min-h-[100px]"
+        }`}
+      />
     </div>
   );
 };

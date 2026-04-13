@@ -5,9 +5,10 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { FeatureDetail } from "@/components/app/features/feature-detail";
+import { Button } from "@/components/ui/button";
 
 export default function FeatureDetailPage() {
-  const { featureId } = useParams<{ slug: string; featureId: string }>();
+  const { featureId, slug } = useParams<{ slug: string; featureId: string }>();
   const feature = useQuery(api.features.get, {
     featureId: featureId as Id<"features">,
   });
@@ -33,5 +34,5 @@ export default function FeatureDetailPage() {
     );
   }
 
-  return <FeatureDetail feature={feature} />;
+  return <FeatureDetail feature={feature} slugProject={slug} />;
 }

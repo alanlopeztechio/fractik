@@ -17,7 +17,10 @@ interface FeaturesListInlineProps {
   projectSlug: string;
 }
 
-export function FeaturesListInline({ capabilityId, projectSlug }: FeaturesListInlineProps) {
+export function FeaturesListInline({
+  capabilityId,
+  projectSlug,
+}: FeaturesListInlineProps) {
   const features = useQuery(api.features.listByCapability, { capabilityId });
   const [showCreate, setShowCreate] = useState(false);
   const router = useRouter();
@@ -47,7 +50,9 @@ export function FeaturesListInline({ capabilityId, projectSlug }: FeaturesListIn
       {features.map((feat) => (
         <button
           key={feat._id}
-          onClick={() => router.push(`/projects/${projectSlug}/features/${feat._id}`)}
+          onClick={() =>
+            router.push(`/projects/${projectSlug}/features/${feat._id}`)
+          }
           className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm hover:bg-accent transition-colors"
           type="button"
         >
@@ -125,7 +130,12 @@ function CreateFeatureInline({
         autoFocus
         className="h-7 text-sm"
       />
-      <Button size="sm" variant="ghost" onClick={handleSubmit} disabled={!name.trim() || loading}>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={handleSubmit}
+        disabled={!name.trim() || loading}
+      >
         Crear
       </Button>
     </div>
