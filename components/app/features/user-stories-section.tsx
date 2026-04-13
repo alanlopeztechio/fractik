@@ -78,7 +78,7 @@ export function UserStoriesSection({ featureId }: UserStoriesSectionProps) {
               <DialogTitle>Nueva User Story</DialogTitle>
             </DialogHeader>
             <UserStoryForm values={values} onChange={setValues} />
-            <DialogFooter showCloseButton>
+            <DialogFooter showCloseButton className="items-center">
               <Button onClick={handleCreate} disabled={loading} size="sm">
                 Crear historia
               </Button>

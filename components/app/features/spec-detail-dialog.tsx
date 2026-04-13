@@ -225,7 +225,6 @@ export function SpecDetailDialog({
             <SpecMarkdownEditor
               value={content}
               onChange={handleContentChange}
-              minHeight="250px"
             />
           </section>
 

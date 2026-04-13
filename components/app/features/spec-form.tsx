@@ -103,7 +103,6 @@ export function SpecForm({ values, onChange }: SpecFormProps) {
         <SpecMarkdownEditor
           value={values.content}
           onChange={(v) => set("content", v)}
-          minHeight="200px"
         />
       </div>
 
