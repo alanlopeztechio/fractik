@@ -9,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Eye, Pencil, Save, History, X } from "lucide-react";
 import { toast } from "sonner";
-import { VisionPreview } from "./vision-preview";
-import { VisionTimeline } from "./vision-timeline";
-import { VisionDiffViewer } from "./vision-diff-viewer";
+import { VisionPreview } from "@/components/app/vision/vision-preview";
+import { VisionTimeline } from "@/components/app/vision/vision-timeline";
+import { VisionDiffViewer } from "@/components/app/vision/vision-diff-viewer";
 
 interface VisionEditorProps {
   project: Doc<"projects">;
