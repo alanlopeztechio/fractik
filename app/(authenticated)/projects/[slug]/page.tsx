@@ -10,7 +10,6 @@ import { ProjectOverview } from "@/components/app/projects/project-overview";
 import { CapabilitiesTab } from "@/components/app/projects/capabilities-tab";
 import { ProjectSettings } from "@/components/app/projects/project-settings";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 
 export default function ProjectPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -94,6 +93,7 @@ export default function ProjectPage() {
         <TabsContent value="overview" className="mt-4">
           <ProjectOverview
             projectId={project._id}
+            projectSlug={slug}
             visionContent={project.visionContent}
           />
         </TabsContent>

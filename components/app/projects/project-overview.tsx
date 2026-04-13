@@ -1,37 +1,64 @@
 "use client";
 
+import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/app/empty-state";
-import { Layers, GitBranch, FileText, TestTube2 } from "lucide-react";
+import { Layers, GitBranch, FileText, TestTube2, Pencil } from "lucide-react";
 
 interface ProjectOverviewProps {
   projectId: Id<"projects">;
+  projectSlug: string;
   visionContent: string;
 }
 
-export function ProjectOverview({ projectId, visionContent }: ProjectOverviewProps) {
+export function ProjectOverview({
+  projectId,
+  projectSlug,
+  visionContent,
+}: ProjectOverviewProps) {
   const capabilities = useQuery(api.capabilities.listByProject, { projectId });
 
-  const stats = capabilities !== undefined
-    ? { capabilityCount: capabilities.length }
-    : null;
+  const stats =
+    capabilities !== undefined
+      ? { capabilityCount: capabilities.length }
+      : null;
 
   return (
     <div className="space-y-6">
       {/* Vision */}
-      {visionContent && (
-        <section>
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-muted-foreground">
             Vision Statement
           </h3>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            nativeButton={false}
+            render={<Link href={`/projects/${projectSlug}/vision`} />}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Editar Vision
+          </Button>
+        </div>
+        {visionContent ? (
           <div className="rounded-lg border bg-muted/30 p-4">
             <p className="whitespace-pre-wrap text-sm">{visionContent}</p>
           </div>
-        </section>
-      )}
+        ) : (
+          <div className="rounded-lg border border-dashed bg-muted/10 p-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Sin visión definida. Haz click en &quot;Editar Vision&quot; para
+              comenzar.
+            </p>
+          </div>
+        )}
+      </section>
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
