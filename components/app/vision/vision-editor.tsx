@@ -87,11 +87,9 @@ export function VisionEditor({ project }: VisionEditorProps) {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Vision Statement</h1>
         <div className="flex items-center gap-2">
-          {/* Timeline toggle */}
           <Button
             variant="outline"
             size="sm"
@@ -107,7 +105,6 @@ export function VisionEditor({ project }: VisionEditorProps) {
             )}
           </Button>
 
-          {/* Mode toggles */}
           {mode === "edit" ? (
             <>
               <Button
@@ -144,7 +141,6 @@ export function VisionEditor({ project }: VisionEditorProps) {
       </div>
 
       <div className="flex gap-4">
-        {/* Main content area */}
         <div className="flex-1 min-w-0">
           {mode === "edit" && (
             <div className="space-y-3">
@@ -166,7 +162,7 @@ export function VisionEditor({ project }: VisionEditorProps) {
           )}
 
           {mode === "preview" && (
-            <div className="rounded-lg border bg-muted/30 p-6 min-h-[200px]">
+            <div className="rounded-lg border bg-muted/30 p-6 min-h-50">
               {project.visionContent ? (
                 <VisionPreview content={project.visionContent} />
               ) : (
