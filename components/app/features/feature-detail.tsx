@@ -10,6 +10,7 @@ import { Breadcrumbs } from "@/components/app/breadcrumbs";
 import { UserStoriesSection } from "./user-stories-section";
 import { SpecsSection } from "./specs-section";
 import { toast } from "sonner";
+import TestCasesSection from "@/components/app/features/TestCasesSection";
 
 interface FeatureDetailProps {
   feature: Doc<"features">;

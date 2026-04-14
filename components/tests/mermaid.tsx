@@ -39,7 +39,7 @@ const Mermaid = ({ chart }: MermaidProps) => {
         }
       } catch (err) {
         console.error("Mermaid render error:", err);
-        setError("Error en sintaxis del diagrama");
+        setError(`Error en sintaxis del diagrama ${err}`);
 
         const badge = document.getElementById(`d${renderId}`);
         if (badge) badge.remove();
