@@ -33,13 +33,15 @@ export function SpecMarkdownEditor({
           </div>
         }
       >
-        <InitializedMDXEditor
-          markdown={value}
-          onChange={onChange}
-          editorRef={editorRef}
-          placeholder={placeholder}
-          readOnly={readOnly}
-        />
+        <div className="prose prose-slate dark:prose-invert max-w-none">
+          <InitializedMDXEditor
+            markdown={value}
+            onChange={onChange}
+            editorRef={editorRef}
+            placeholder={placeholder}
+            readOnly={readOnly}
+          />
+        </div>
       </Suspense>
     </div>
   );

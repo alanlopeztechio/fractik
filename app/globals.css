@@ -129,3 +129,20 @@
     @apply font-sans;
   }
 }
+
+.mdxeditor p {
+  color: var(--foreground) !important;
+}
+
+.mdxeditor-popup-container {
+  z-index: 9999 !important;
+}
+
+.mdxeditor-toolbar-dropdown-item {
+  color: var(--foreground) !important;
+  background-color: var(--background) !important;
+}
+
+.mdxeditor-toolbar-dropdown-item:hover {
+  background-color: var(--accent) !important;
+}
